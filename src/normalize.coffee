@@ -3,15 +3,12 @@ module.exports = norm =
 		normalized = []
 		for clause in clauses
 			for fld, constraint of clause
-				[alias, field] = fld.split '.'
-				fld = field || fld
-				tbl = if field? then alias else table
 				if 'object' == typeof constraint
 					for op, val of constraint
 						op = normalizeOp(op)
-						normalized.push field: fld, op: op, value: val, table: tbl
+						normalized.push field: field, op: op, value: val, table: table
 				else
-					normalized.push field: fld, op: '=', value: constraint, table: tbl
+					normalized.push field: field, op: '=', value: constraint, table: table
 		return normalized
 
 	orderings: (orderings, table) ->
@@ -26,7 +23,7 @@ module.exports = norm =
 
 		for ordering in orderings
 			if 'string' == typeof ordering
-				[field, direction] = ordering.split /\ +/ 
+				[field, direction] = ordering.split /\ +/
 				add field, direction
 			else for field, direction of ordering
 				add field, direction
