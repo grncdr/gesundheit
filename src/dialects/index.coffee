@@ -1,20 +1,9 @@
-exports.JOIN_TYPES = JOIN_TYPES = [
-	'LEFT', 'RIGHT', 'INNER',
-	'LEFT OUTER', 'RIGHT OUTER', 'FULL OUTER'
-	'NATURAL', 'CROSS'
-]
-
 prefixIfNotEmpty = (prefix) ->
   (node) ->
     children = @renderNodeSet node
     if children then prefix + children else ''
 
-module.exports.BaseDialect = module.exports.default = class BaseDialect
-  validateJoinType: (type) ->
-    return 'INNER' unless type
-    type = type.toUpperCase()
-    if type in JOIN_TYPES then type
-    else throw new Error "Unsupported JOIN type #{type}"
+exports.BaseDialect = exports.default = class BaseDialect
 
   render: (node) ->
     type = node.__proto__
@@ -39,7 +28,7 @@ module.exports.BaseDialect = module.exports.default = class BaseDialect
 
   maybeParens: (it) -> if /\s/.exec it then "(#{it})" else it
 
-  renderProjectionSet: (set) ->
+  renderSelectProjectionSet: (set) ->
     if not set.nodes.length
       '*'
     else
@@ -57,9 +46,11 @@ module.exports.BaseDialect = module.exports.default = class BaseDialect
 
   renderParameter: (node) -> '?'
 
+
   renderSelect: prefixIfNotEmpty 'SELECT '
   renderUpdate: prefixIfNotEmpty 'UPDATE '
-  renderInsert: prefixIfNotEmpty 'INSERT '
+  renderInsert: prefixIfNotEmpty 'INSERT INTO '
+  renderInsertData: prefixIfNotEmpty 'VALUES '
   renderDelete: prefixIfNotEmpty 'DELETE '
   renderUpdateSet: prefixIfNotEmpty 'SET '
   renderRelationSet: prefixIfNotEmpty 'FROM '

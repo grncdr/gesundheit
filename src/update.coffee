@@ -1,21 +1,22 @@
 fluid = require './fluid'
 SUDQuery = require './sud-query'
-{Update, Binary} = require './nodes'
+{Update, Binary, Parameter} = require './nodes'
 
 module.exports = class UpdateQuery extends SUDQuery
 	set: fluid (data) ->
 		for field, value of data
-	    @q.updates.addNode @q.relation.project(field).eq value
+			@q.updates.addNode new Binary field, '=', new Parameter value
 
 	setNodes: fluid (nodes...) -> @q.updates.push nodes...
 
 	setRaw: fluid (data) ->
 		for field, value of data
-			@s.fields.push field+' = '+value
+			@q.fields.push field+' = '+value
 
 	defaultRel: -> @q.relation
 
 UpdateQuery.table = (table, opts={}) ->
 	opts.table = table
-	console.log "Updating #{table}"
-	new UpdateQuery Update, opts
+	q = new UpdateQuery Update, opts
+	console.log q.relation
+	q

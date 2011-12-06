@@ -2,7 +2,7 @@ vows = require 'vows'
 assert = require 'assert'
 newQuery = require('./macros').newQuery
 
-select = require('../lib').Select
+{select, LEFT_OUTER} = require '../lib'
 
 suite = vows.describe('SELECT queries').addBatch(
 	"When performing a SELECT": newQuery
@@ -32,7 +32,7 @@ suite = vows.describe('SELECT queries').addBatch(
 				fakeClient =
 					query: (sql, par, cb) ->
 						assert.strictEqual sql, 'SELECT * FROM t1'
-						#assert.deepEqual par, []
+						assert.deepEqual par, []
 						cb null, "Sweet"
 				pool =
 					acquire: (cb) -> cb fakeClient
@@ -116,7 +116,7 @@ suite = vows.describe('SELECT queries').addBatch(
 			sql: "SELECT * FROM t1 INNER JOIN t1 AS parent"
 
 		"and joining another table with a left outer join": newQuery
-			mod: -> @join "t2", type: 'left outer'
+			mod: -> @join "t2", type: LEFT_OUTER
 			sql: "SELECT * FROM t1 LEFT OUTER JOIN t2"
 
 		"joining with an invalid join type fails": (q) ->

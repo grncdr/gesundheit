@@ -32,7 +32,7 @@ module.exports = class SUDQuery extends BaseQuery
 
 # Add one or more WHERE clauses, all joined by the OR operator
   or: fluid (args...) ->
-    rel = @defaultRel
+    rel = @defaultRel()
     clauses = []
     for arg in args
       clauses.push (@makeClauses rel, arg)...
